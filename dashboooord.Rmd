@@ -1,0 +1,43 @@
+---
+title: "Dashboard"
+author: "GTA"
+date: "04/10/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+source("./nettoyage.R")
+```
+
+## Bailleurs par Zone et agence
+
+```{r bailleurs}
+Bailleurs = data %>%  
+  select(Acteur.Organisation.de.mise.en.oeuvre, Bailleurs.de.fonds, Zone.de.sante) %>% 
+  dplyr::group_by(Acteur.Organisation.de.mise.en.oeuvre) %>%  
+  nest() %>%  
+  mutate(Bailleurs = map(data, function(df) paste(unique(df$Bailleurs.de.fonds), collapse = ','))) %>%  
+  mutate(Zone = map(data, function(df) paste(as.character(unique(df$Zone.de.sante)), collapse = ',')))
+
+            
+Bailleurs %>% 
+  select(Acteur.Organisation.de.mise.en.oeuvre, Bailleurs, Zone) %>% 
+  kable(format = "markdown")
+```
+
+## Plot
+
+```{r pressure, echo=FALSE}
+stats_fp = aggregate(data$prix_USD, list(data$Zone.de.sante), sum, na.rm = T)
+names(stats_fp) = c("Zone", "Somme_projets")
+stats_fp  %<>% filter(Somme_projets > 0) 
+ggplot(stats_fp, aes(x = Zone, 
+        y = Somme_projets), fill = reach_style_color_darkgrey(1)) + 
+        geom_bar(stat = "identity") + theme_tufte() + xlab("mo") + 
+        ylab("je") + theme(text = element_text(family = "Arial Narrow"), 
+        axis.title.x = element_blank(), axis.title.y = element_blank())  
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

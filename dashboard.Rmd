@@ -1,0 +1,160 @@
+---
+title: "Dashboard"
+author: "GTA"
+date: "04/10/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE, warning = F, echo = F, render= F, results = "hide"}
+knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+library(ggplot2)
+library(ggthemes)
+library(graphics)
+library(forcats)
+library(scales)
+library(extrafont)
+```
+
+```{r loading, include=TRUE, echo = F, results = "hide", warning=FALSE, render = F}
+source("./nettoyage.R")
+```
+
+## Carte de Partenaires par Province 
+
+```{r partenaires, results='asis', warnings = FALSE, echo=FALSE}
+parternaires_exec = data %>% 
+  filter(Statut == "compl_t") 
+
+nombre_parternaires_exec = parternaires_exec %>% 
+  select(Acteur.Organisation.de.mise.en.oeuvre) %>% unique %>% nrow
+
+cat("Nombre de partenaires avec interventions:",nombre_parternaires_exec,"</b><br>")
+
+parternaires_exec_p = comptage_par_admin(df = parternaires_exec,
+                                            nom.admin = Province,
+                                            nom.partenaires =                                           "Acteur.Organisation.de.mise.en.oeuvre")
+
+partenaires_exec_carte = carte_complete(donnees_groupees =
+                                          parternaires_exec_p, 
+                                        shapefile = Province, 
+                                        nom.admin.donnees = "Province",
+                                        nom.admin.shapefile = "NOM", 
+                                        variable = "Partenaires")
+
+couleurs <- couleurs_pour_carte("Blues", nombre = length(unique(partenaires_exec_carte$Partenaires)))
+
+ggplot(partenaires_exec_carte) + 
+  geom_sf(aes(fill = factor(Partenaires))) + 
+  scale_fill_manual(values = couleurs) + 
+  labs(fill = "Partenaires avec interventions") + 
+  theme(text = element_text(family = "Arial Narrow"))
+
+
+parternaires_planifie = data %>% 
+  filter(Statut == "planifi") 
+
+parternaires_planifie_n = parternaires_planifie %>% 
+  select(Acteur.Organisation.de.mise.en.oeuvre) %>% unique %>% nrow
+
+
+cat("Nombre de partenaires avec interventions plannifiees:", parternaires_planifie_n, "</b><br>") ##
+
+parternaires_planifie_p = comptage_par_admin(df = parternaires_planifie,
+                                            nom.admin = Province,
+                                            nom.partenaires =                                           "Acteur.Organisation.de.mise.en.oeuvre")
+
+partenaires_planifie_carte = carte_complete(donnees_groupees = parternaires_planifie_p,
+                                        shapefile = Province, 
+                                        nom.admin.donnees = "Province",
+                                        nom.admin.shapefile = "NOM", 
+                                        variable = "Partenaires")
+
+ggplot(partenaires_planifie_carte) + 
+  geom_sf(aes(fill = factor(Partenaires))) + 
+  scale_fill_manual(values = couleurs) + 
+  labs(fill = "Partenaires avec interventions plannifiees") + 
+  theme(text = element_text(family = "Arial Narrow"))
+
+
+```
+
+## Interventions par partenaire et bailleur pour chaque Zone de Sante
+
+
+```{r partenaires, results='asis', warnings = FALSE, echo=FALSE}
+Partenaires <- data %>%  
+  select(Acteur_Organisation_de_mise_en_uvre, Bailleurs_de_fonds, zonesante) %>% 
+  dplyr::group_by(zonesante) %>%  
+  nest() %>%  
+  mutate(Bailleurs = map(data, function(df) unique(df$Bailleurs_de_fonds))) %>%  mutate(Partenaire = map(data, function(df)unique(df$Acteur_Organisation_de_mise_en_uvre)))
+
+Partenaires$Bailleurs = map_to_labels_outside(Partenaires$Bailleurs, "Bailleurs_de_fonds", questionnaire)
+            
+Partenaires %<>% 
+  select(Zone.de.sante, Partenaire, Bailleurs) %>% 
+  kable(format = "markdown")
+```
+
+
+## Montant de projets par Zone et bailleurs
+
+```{r bailleurs, echo=FALSE,warnings = FALSE}
+
+stats_fp = aggregate(data$prix_USD, list(data$Province), sum, na.rm = T)
+names(stats_fp) = c("Province", "Somme_projets")
+stats_fp <- stats_fp %>% filter(., Somme_projets > 0) 
+
+stats_fp = stats_fp[order(- stats_fp$Somme_projets),] # Pour les avoir dans le bon ordre
+stats_fp$Province <- factor(stats_fp$Province, levels = stats_fp$Province) # bloquer l'ordre
+
+Plot_beef = ggplot(stats_fp, aes(x = Province, 
+        y = Somme_projets), fill = reach_style_color_red(1)) + 
+        geom_bar(stat = "identity") + theme_classic() + ylab("Montant Total") +
+        xlab("Province") + theme(text = element_text(family = "Arial Narrow") 
+        #axis.title.x = element_blank(), axis.title.y = element_blank()
+        ) 
+
+cat("Somme des activites par province")
+Plot_beef + scale_y_continuous(labels = comma)
+
+fp_projets = aggregate(data$prix_USD, list(data$Bailleurs.de.fonds), sum, na.rm = T)
+names(fp_projets) = c("Bailleurs", "Somme_projets")
+fp_projets  %<>% filter(Somme_projets > 0) 
+
+cat("Quantite totale des fonds par Bailleur")
+
+fp_projets = fp_projets[order(fp_projets$Somme_projets),] # Pour les avoir dans le bon ordre
+fp_projets$Bailleurs <- factor(fp_projets$Bailleurs, levels = fp_projets$Bailleurs) # bloquer l'ordre
+
+Bailleurs = ggplot(fp_projets, aes(x = Somme_projets, 
+        y = Bailleurs), fill = reach_style_color_red(1), size = 6) + 
+  geom_point(stat = "identity", color = "#EE5859") +
+        xlab("Montant") + theme(text = element_text(family = "Arial Narrow") 
+        #axis.title.x = element_blank(), axis.title.y = element_blank()
+        ) 
+
+Bailleurs + scale_x_continuous(labels = comma)
+```
+
+## Types de beneficiaires
+
+```{r beneficiaires, echo = FALSE, warnings = FALSE}
+
+homes = aggregate(data$Nombre.total.de.personnes.couvertes, list(data$Type.de.beneficiaires), sum, na.rm = T)
+names(homes) = c("Type", "Total_Personnes")
+homes %<>% filter(Total_Personnes > 0) 
+
+# Pour les avoir dans le bon ordre
+homes = homes[order(homes$Total_Personnes),]
+# lock in factor level order
+homes$Type <- factor(homes$Type, levels = homes$Type)
+# homes <- within(homes, Total_Personnes <- factor(Total_Personnes, 
+# levels=names(sort(table(Total_Personnes), # decreasing=TRUE))))
+                                                       
+Plot_benef = ggplot(homes, aes(x= Type, y = Total_Personnes), fill = reach_style_color_red(1)) + 
+        geom_col() + theme(text = element_text(family = "Arial Narrow")) + xlab("Total de personnes") + ylab("Type de beneficiare") + coord_flip()
+       # axis.title.x = element_blank(), axis.title.y = element_blank()
+
+Plot_benef
+```
