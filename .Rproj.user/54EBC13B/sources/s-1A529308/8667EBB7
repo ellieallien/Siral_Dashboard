@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1570108741872.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "8667EBB7",
+    "lastKnownWriteTime" : 1570199897,
+    "last_content_update" : 1570199897343,
+    "path" : "~/Eliora Henzler/GitHub/SIRAL_dashboard/nettoyage.R",
+    "project_path" : "nettoyage.R",
+    "properties" : {
+        "cursorPosition" : "37,30",
+        "scrollLine" : "28",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : true,
+    "source_window" : "",
+    "type" : "r_source"
+}

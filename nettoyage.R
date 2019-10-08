@@ -11,7 +11,7 @@ library("RColorBrewer") #couleurs plus cool
 setwd("C:/Users/Admin/Documents/Eliora Henzler/GitHub/SIRAL_dashboard")
 
 #Chargement des donnees
-data = read.csv2("./input/logements_donnes.csv", stringsAsFactors = F)
+data = read.csv2("./Siral_Dashboard/input/logements_donnes.csv", stringsAsFactors = F)
 questions = read.csv2("./input/questions.csv", stringsAsFactors = F)
 names(questions)[1] = "type"
 choices = read.csv2("./input/choices.csv", stringsAsFactors = F)
@@ -67,6 +67,6 @@ map_to_labels_outside <- function(vector, variable.name , questionnaire){
   vector %<>% lapply(function(x){
     questionnaire$question_get_choice_labels(x, 
                                              variable.name = variable.name)
-    }) %>% paste() unlist %>% as.character
+    }%>% paste(collapse = ","))  %>% unlist %>% as.character
   return(vector)
 }

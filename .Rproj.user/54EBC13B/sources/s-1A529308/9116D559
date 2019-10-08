@@ -1,0 +1,33 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1570201282232.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "9116D559",
+    "lastKnownWriteTime" : 21474896480,
+    "last_content_update" : 1570201282232,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "A201B6FF",
+        "caption" : "parternaires_exec",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=parternaires_exec&cache_key=A201B6FF",
+        "displayedObservations" : "11",
+        "environment" : "",
+        "expression" : "parternaires_exec",
+        "object" : "parternaires_exec",
+        "preview" : "0",
+        "totalObservations" : "11",
+        "variables" : "1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

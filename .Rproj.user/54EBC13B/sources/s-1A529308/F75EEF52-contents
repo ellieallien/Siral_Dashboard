@@ -1,0 +1,71 @@
+---
+title: "Dashboard"
+author: "GTA"
+date: "04/10/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE, warnings = F, echo = F}
+knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+library(ggplot2)
+library(ggthemes)
+library(graphics)
+```
+
+```{r loading, include=TRUE, echo = F}
+source("./nettoyage.R")
+```
+
+## Partenaires par Zone et bailleurs
+
+```{r partenaires, results='asis', warning = FALSE, echo=FALSE}
+parternaires_exec = data %>% 
+  filter(Statut == "complete") %>% 
+  select(Acteur.Organisation.de.mise.en.oeuvre) %>% unique %>% nrow
+
+cat("Nombre de partenaires avec interventions",parternaires_exec,"</b><br>")
+
+parternaires_planifie = data %>% 
+  filter(Statut == "planifie") %>% 
+  select(Acteur.Organisation.de.mise.en.oeuvre) %>% unique %>% nrow
+
+cat("Nombre de partenaires avec interventions plannifiees",parternaires_planifie,"</b><br>")
+
+
+
+Partenaires = data %>%  
+  select(Acteur.Organisation.de.mise.en.oeuvre, Bailleurs.de.fonds, Zone.de.sante) %>% 
+  dplyr::group_by(Acteur.Organisation.de.mise.en.oeuvre) %>%  
+  nest() %>%  
+  mutate(Bailleurs = map(data, function(df) paste(unique(df$Bailleurs.de.fonds), collapse = ', '))) %>%  
+  mutate(Zone = map(data, function(df) paste(as.character(unique(df$Zone.de.sante)), collapse = ', ')))
+
+            
+Partenaires %>% 
+  select(Acteur.Organisation.de.mise.en.oeuvre, Bailleurs, Zone) %>% 
+  kable(format = "markdown")
+```
+
+## Plot
+
+```{r pressure, echo=FALSE}
+stats_fp = aggregate(data$prix_USD, list(data$Province), sum, na.rm = T)
+names(stats_fp) = c("Province", "Somme_projets")
+stats_fp  %<>% filter(Somme_projets > 0) 
+Plot_beef = ggplot(stats_fp, aes(x = Province, 
+        y = Somme_projets), fill = reach_style_color_red(1)) + 
+        geom_bar(stat = "identity") + theme_tufte() + xlab("Montant Total") + 
+        ylab("Provine") + theme(text = element_text(family = "Arial Narrow"), 
+        axis.title.x = element_blank(), axis.title.y = element_blank()) 
+
+Plot_beef
+
+fp_projets = aggregate(data$prix_USD, list(data$Bailleurs.de.fonds), sum, na.rm = T)
+names(fp_projets) = c("Bailleurs", "Somme_projets")
+fp_projets  %<>% filter(Somme_projets > 0) 
+pie(x = fp_projets$Somme_projets, labels = fp_projets$Bailleurs)
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

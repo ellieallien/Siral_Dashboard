@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1570109334647.000,
+    "dirty" : true,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "5097CA3A",
+    "lastKnownWriteTime" : 1570100985,
+    "last_content_update" : 1570178728807,
+    "path" : "~/Eliora Henzler/GitHub/researchcyclematrix/inst/md_templates/country_status.Rmd",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "43,52",
+        "scrollLine" : "40"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}
