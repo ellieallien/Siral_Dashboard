@@ -1,11 +1,13 @@
 comptage_par_admin  <- function(df, 
-                                   nom.admin = Province,
+                                   nom.admin = province,
                                    nom.partenaires = "Partenaires"){
   quadmin = enquo(nom.admin)
+  qu_admin = quo_name(enquo(nom.admin))
+  variables = c(qu_admin, nom.partenaires)
   partenaires_p = df %>%  dplyr::group_by(!! quadmin) %>% 
     nest() %>%  
-    mutate(Partenaires = map(data, function(df)
-      length(unique(df[[nom.partenaires]])))  %>% unlist) %>% select(Partenaires, Province) %>% as.data.frame
+    mutate(!! nom.partenaires := map(data, function(df)
+      length(unique(df[[nom.partenaires]])))  %>% unlist) %>% select(!! variables) %>% as.data.frame
 
   return(partenaires_p)
 }

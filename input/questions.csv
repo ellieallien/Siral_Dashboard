@@ -51,7 +51,7 @@ integer;vieux;Nombre d'hommes de 60 et plus;true;;;;;
 calculate;calculation_001;;false;;;;${filles}+${garcons}+${femmes}+${hommes}+${vieilles}+${vieux};calculation
 integer;Nombre_de_personnes_handicap_es_femmes;Nombre de personnes handicapées femmes;true;;;;;
 integer;Nombre_de_personnes_handicap_es_hommes;Nombre de personnes handicapées hommes;true;;;;;
-select_multiple yq3wy84;Type_de_b_n_ficiaires;Type de bénéficiaires;true;;;;;
+select_multiple yq3wy84;type_de_b_n_ficiaires;Type de bénéficiaires;true;;;;;
 integer;Montant_total_couvra_l_activit_rapport_e;Montant total couvrant l'activité rapportée;true;;;;;
 note;Si_la_modalit_est_m_d_livr_par_modalit;Si la modalité est mixte, montant délivré par modalité;false;;${modalite} = 'mixte';;;
 integer;Nature;Nature;true;;selected(${Mecanisme_de_distribution_mix}, 'nature');;;
