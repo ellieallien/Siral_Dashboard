@@ -5,7 +5,7 @@ date: "08/10/2019"
 output: html_document
 ---
 
-```{r setup, include=FALSE, warning = F, echo = F, render= F, results = "hide"}
+```{r setup, include=FALSE, warning = F, echo = F, render= F, results = 'hide'}
 
 knitr::opts_chunk$set(echo = TRUE)
 library(knitr)
@@ -17,7 +17,7 @@ library(scales)
 library(extrafont)
 ```
 
-```{r loading, include=TRUE, echo = F, results = "hide", warning=FALSE, render = F}
+```{r loading, include=TRUE, echo = F, results = 'hide', warning=FALSE, render = F}
 source("./nettoyage.R")
 ```
 
@@ -181,15 +181,17 @@ ggplot(carte_gap) +
 
 ```
 
-## Types de beneficiaires
+## Qui benificie?
 
 ```{r type_benef, echo = FALSE, warnings = FALSE}
-# 
+#
+
+# Pourque ceci colle vraiment il faudra savoir combien de chaque groupe ont ete targeted 
 # doooo = data[questionnaire$choices_for_select_multiple("type_de_b_n_ficiaires", data)]
 # 
 # chacun = doooo %>% lapply(., function(x, y)sum(x, na.rm = T)) %>% unlist
 
-#Pourque ceci colle vraiment il faudra ensuite le tout par 
+
 
 homes = aggregate(data$menages_projet, list(data$type_de_b_n_ficiaires), sum, na.rm = T)
 names(homes) = c("Type", "Total_Personnes")

@@ -12,7 +12,13 @@ comptage_par_admin  <- function(df,
   return(partenaires_p)
 }
 
-
+#' Fonction qui renvoie une base de données à cartographier collée à une base de données de format "sf" 
+#' @param donnees_groupees base de donnees contenant les moyennes/pourcentages/valeurs pour chaque element a cartographier
+#' @param shapefile multipolygone contenant une colonne permettant de la relier aux donnees groupees
+#' @param nom.admin.donnees le nom de la colonne qui donne les lieux dans 'donnees_groupees'
+#' @param nom.admin.shapefile le nom de la colonne qui donne les lieux dans 'shapefile'
+#' @param variable le nom de/des variables a cartographier dans 'donnees_groupees'
+#' @return une base de donnees jointes; prete a etre convertie en carte avec ggplot ou arcgis
 carte_complete <- function(donnees_groupees, 
                            shapefile,
                          nom.admin.donnees = "Province",
@@ -34,7 +40,7 @@ carte_complete <- function(donnees_groupees,
                             by.x = nom.admin.shapefile, 
                             all.x = T)  %>%  select(!! variables)
  
-  Geometrie_groupee[[variable]][is.na(Geometrie_groupee[[variable]])] = 0
+  # Geometrie_groupee[[variable]][is.na(Geometrie_groupee[[variable]])] = 0
   
   return(Geometrie_groupee)
 }
